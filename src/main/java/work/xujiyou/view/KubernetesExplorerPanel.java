@@ -207,6 +207,10 @@ public class KubernetesExplorerPanel extends JPanel implements Disposable {
         return tree;
     }
 
+    public Tree getTree() {
+        return kubernetesTree;
+    }
+
     @Override
     public void dispose() {
 

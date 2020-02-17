@@ -61,9 +61,7 @@ public class KubernetesConfiguration implements PersistentStateComponent<Kuberne
     }
 
     @Override
-    public void initializeComponent() {
-
-    }
+    public void initializeComponent() { }
 
     @Override
     public String toString() {
