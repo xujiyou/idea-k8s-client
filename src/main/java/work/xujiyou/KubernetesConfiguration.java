@@ -4,12 +4,14 @@ import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.XmlSerializerUtil;
+import com.intellij.util.xmlb.annotations.XCollection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,13 +28,14 @@ import java.util.List;
 )
 public class KubernetesConfiguration implements PersistentStateComponent<KubernetesConfiguration> {
 
-    private List<ServerConfiguration> serverConfigurations = new LinkedList<>();
+    @XCollection
+    private List<String> serverConfigurations = new ArrayList<>();
 
     public static KubernetesConfiguration getInstance() {
         return ServiceManager.getService(KubernetesConfiguration.class);
     }
 
-    public List<ServerConfiguration> getServerConfigurations() {
+    public List<String> getServerConfigurations() {
         return serverConfigurations;
     }
 
@@ -52,14 +55,20 @@ public class KubernetesConfiguration implements PersistentStateComponent<Kuberne
         String userHome = System.getProperties().getProperty("user.home");
         File defaultFile = new File(userHome + "/.kube/config");
         if (defaultFile.exists()) {
-            ServerConfiguration serverConfiguration = new ServerConfiguration();
-            serverConfiguration.setConfigPath(defaultFile.getPath());
-            serverConfigurations.add(serverConfiguration);
+            serverConfigurations.add(defaultFile.getPath());
         }
+        XmlSerializer.serialize(this);
     }
 
     @Override
     public void initializeComponent() {
 
+    }
+
+    @Override
+    public String toString() {
+        return "KubernetesConfiguration{" +
+                "serverConfigurations=" + serverConfigurations +
+                '}';
     }
 }

@@ -1,13 +1,10 @@
 package work.xujiyou.view.model;
 
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.intellij.util.ui.tree.AbstractTreeModel;
 import org.yaml.snakeyaml.Yaml;
 import work.xujiyou.KubernetesConfiguration;
-import work.xujiyou.ServerConfiguration;
 import work.xujiyou.constant.ResourcesType;
 
 import javax.swing.event.TreeModelListener;
@@ -33,11 +30,14 @@ public class KubernetesTreeModel implements TreeModel {
 
     public KubernetesTreeModel() {
         List<KubernetesNode> allClusterNodeList = new ArrayList<>();
-        List<ServerConfiguration> serverConfigurationList = KubernetesConfiguration.getInstance().getServerConfigurations();
-        serverConfigurationList.forEach((serverConfiguration) -> {
+        List<String> serverConfigurationList = KubernetesConfiguration.getInstance().getServerConfigurations();
+        serverConfigurationList.forEach((configPath) -> {
+            if (configPath == null) {
+                return;
+            }
             try {
                 Yaml yaml = new Yaml();
-                InputStream inputStream = new FileInputStream(new File(serverConfiguration.getConfigPath()));
+                InputStream inputStream = new FileInputStream(new File(configPath));
                 Map<String, Object> yamlMap = yaml.load(inputStream);
                 JSONObject clusterConfigJson = new JSONObject(yamlMap);
                 JSONArray clusterArray = clusterConfigJson.getJSONArray("clusters");
@@ -46,7 +46,7 @@ public class KubernetesTreeModel implements TreeModel {
                     clusterNode.setLeaf(false);
                     clusterNode.setName((cluster.get("name").toString()));
                     clusterNode.setResourcesType(ResourcesType.CLUSTER);
-                    clusterNode.setConfigPath(serverConfiguration.getConfigPath());
+                    clusterNode.setConfigPath(configPath);
                     clusterNode.setChildren(new ArrayList<>());
                     allClusterNodeList.add(clusterNode);
                 });

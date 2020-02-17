@@ -11,7 +11,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.treeStructure.Tree;
 import work.xujiyou.KubernetesConfiguration;
-import work.xujiyou.ServerConfiguration;
 import work.xujiyou.utils.GuiUtils;
 import work.xujiyou.view.action.explorer.AddServerAction;
 import work.xujiyou.view.action.explorer.RefreshServerAction;
@@ -21,10 +20,8 @@ import work.xujiyou.view.model.KubernetesTreeModel;
 import javax.swing.*;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
-import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
-import java.awt.event.*;
 import java.net.URL;
 import java.util.List;
 
@@ -75,22 +72,28 @@ public class KubernetesExplorerPanel extends JPanel implements Disposable {
         final TreeExpander treeExpander = new TreeExpander() {
             @Override
             public void expandAll() {
-
+                kubernetesTree.expandRow(0);
             }
 
             @Override
             public boolean canExpand() {
-                return true;
+                if (getServerConfigurations().isEmpty()) {
+                    return false;
+                }
+                return !kubernetesTree.isExpanded(0);
             }
 
             @Override
             public void collapseAll() {
-
+                kubernetesTree.collapseRow(0);
             }
 
             @Override
             public boolean canCollapse() {
-                return true;
+                if (getServerConfigurations().isEmpty()) {
+                    return false;
+                }
+                return !kubernetesTree.isCollapsed(0);
             }
         };
 
@@ -118,7 +121,7 @@ public class KubernetesExplorerPanel extends JPanel implements Disposable {
         GuiUtils.installActionGroupInToolBar(actionGroup, toolBarPanel, ActionManager.getInstance(), "KubernetesExplorerActions", true);
     }
 
-    private List<ServerConfiguration> getServerConfigurations() {
+    private List<String> getServerConfigurations() {
         return KubernetesConfiguration.getInstance().getServerConfigurations();
     }
 
