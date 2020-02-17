@@ -2,9 +2,10 @@ package work.xujiyou.api;
 
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import work.xujiyou.KubernetesConfiguration;
 import work.xujiyou.entity.StorageClassEntity;
 import work.xujiyou.utils.Csv;
-import work.xujiyou.utils.Kubectl;
+import work.xujiyou.utils.Bash;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,8 +20,9 @@ import java.util.List;
 public class StorageClassApi {
 
     public static List<StorageClassEntity> findStorageClass(String configPath) {
+        String kubectlPath = KubernetesConfiguration.getInstance().getKubectlPath();
         try {
-            String result = Kubectl.exec("kubectl get StorageClass --kubeconfig=" + configPath);
+            String result = Bash.exec(kubectlPath + " get StorageClass --kubeconfig=" + configPath);
             if (result != null) {
                 CSVParser parser = Csv.getNodeEntities(result);
                 List<StorageClassEntity> storageClassEntityList = new ArrayList<>();

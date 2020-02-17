@@ -23,7 +23,6 @@ import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.net.URL;
-import java.util.List;
 
 /**
  * KubernetesExplorerPanel class
@@ -77,7 +76,7 @@ public class KubernetesExplorerPanel extends JPanel implements Disposable {
 
             @Override
             public boolean canExpand() {
-                if (getServerConfigurations().isEmpty()) {
+                if (completeConfig()) {
                     return false;
                 }
                 return !kubernetesTree.isExpanded(0);
@@ -90,7 +89,7 @@ public class KubernetesExplorerPanel extends JPanel implements Disposable {
 
             @Override
             public boolean canCollapse() {
-                if (getServerConfigurations().isEmpty()) {
+                if (completeConfig()) {
                     return false;
                 }
                 return !kubernetesTree.isCollapsed(0);
@@ -121,8 +120,8 @@ public class KubernetesExplorerPanel extends JPanel implements Disposable {
         GuiUtils.installActionGroupInToolBar(actionGroup, toolBarPanel, ActionManager.getInstance(), "KubernetesExplorerActions", true);
     }
 
-    private List<String> getServerConfigurations() {
-        return KubernetesConfiguration.getInstance().getServerConfigurations();
+    private boolean completeConfig() {
+        return !KubernetesConfiguration.getInstance().isCompleteConfig();
     }
 
     private Tree createTree() {
@@ -137,7 +136,7 @@ public class KubernetesExplorerPanel extends JPanel implements Disposable {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
 
-                if (!getServerConfigurations().isEmpty()) {
+                if (!completeConfig()) {
                     return;
                 }
 

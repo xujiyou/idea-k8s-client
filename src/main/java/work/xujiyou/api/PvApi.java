@@ -2,11 +2,10 @@ package work.xujiyou.api;
 
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import work.xujiyou.entity.NamespaceEntity;
+import work.xujiyou.KubernetesConfiguration;
 import work.xujiyou.entity.PvEntity;
-import work.xujiyou.entity.StorageClassEntity;
 import work.xujiyou.utils.Csv;
-import work.xujiyou.utils.Kubectl;
+import work.xujiyou.utils.Bash;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,8 +20,9 @@ import java.util.List;
 public class PvApi {
 
     public static List<PvEntity> findPv(String configPath) {
+        String kubectlPath = KubernetesConfiguration.getInstance().getKubectlPath();
         try {
-            String result = Kubectl.exec("kubectl get pv --kubeconfig=" + configPath);
+            String result = Bash.exec(kubectlPath + " get pv --kubeconfig=" + configPath);
             if (result != null) {
                 result = result.replaceAll("ACCESS MODES", "ACCESS_MODES");
                 result = result.replaceAll("RECLAIM POLICY", "RECLAIM_POLICY");

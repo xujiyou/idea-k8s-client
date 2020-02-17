@@ -3,7 +3,6 @@ package work.xujiyou.utils;
 import kotlin.text.Charsets;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.exec.Executor;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +15,7 @@ import java.io.IOException;
  * @author jiyouxu
  * @date 2020/2/16
  */
-public class Kubectl {
+public class Bash {
 
     public static String exec(String command) throws IOException {
         final CommandLine cmdLine = CommandLine.parse(command);

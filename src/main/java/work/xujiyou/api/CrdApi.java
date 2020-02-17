@@ -1,15 +1,13 @@
 package work.xujiyou.api;
 
-import com.google.protobuf.TextFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import work.xujiyou.KubernetesConfiguration;
 import work.xujiyou.entity.CrdEntity;
-import work.xujiyou.entity.PvEntity;
 import work.xujiyou.utils.Csv;
-import work.xujiyou.utils.Kubectl;
+import work.xujiyou.utils.Bash;
 
 import java.io.IOException;
-import java.text.Format;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,9 +20,10 @@ import java.util.List;
 public class CrdApi {
 
     public static List<CrdEntity> findCrd(String configPath) {
+        String kubectlPath = KubernetesConfiguration.getInstance().getKubectlPath();
         try {
-            String command = "kubectl get crd  --kubeconfig=" + configPath;
-            String result = Kubectl.execByAddArg(command, "--output=jsonpath=\"{range .items[*]}{.metadata.name}{','}{.spec.names.kind}{'\\n'}{end}\"");
+            String command = kubectlPath + " get crd  --kubeconfig=" + configPath;
+            String result = Bash.execByAddArg(command, "--output=jsonpath=\"{range .items[*]}{.metadata.name}{','}{.spec.names.kind}{'\\n'}{end}\"");
             if (result != null) {
                 result = "NAME,KIND\n" + result;
                 result = result.replaceAll("\"", "");

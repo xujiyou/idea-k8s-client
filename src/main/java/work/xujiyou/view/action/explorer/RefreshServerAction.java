@@ -3,7 +3,6 @@ package work.xujiyou.view.action.explorer;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
-import work.xujiyou.KubernetesConfiguration;
 import work.xujiyou.view.KubernetesExplorerPanel;
 import work.xujiyou.view.model.KubernetesTreeModel;
 

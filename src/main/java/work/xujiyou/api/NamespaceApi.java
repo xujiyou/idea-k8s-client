@@ -3,12 +3,11 @@ package work.xujiyou.api;
 import com.google.common.collect.Lists;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import work.xujiyou.entity.ComponentStatusEntity;
+import work.xujiyou.KubernetesConfiguration;
 import work.xujiyou.entity.KindEntity;
 import work.xujiyou.entity.NamespaceEntity;
-import work.xujiyou.entity.NodeEntity;
 import work.xujiyou.utils.Csv;
-import work.xujiyou.utils.Kubectl;
+import work.xujiyou.utils.Bash;
 
 import java.io.IOException;
 import java.util.*;
@@ -22,8 +21,9 @@ import java.util.*;
 public class NamespaceApi {
 
     public static List<NamespaceEntity> findNamespace(String configPath) {
+        String kubectlPath = KubernetesConfiguration.getInstance().getKubectlPath();
         try {
-            String result = Kubectl.exec("kubectl get Namespace --kubeconfig=" + configPath);
+            String result = Bash.exec(kubectlPath + " get Namespace --kubeconfig=" + configPath);
             if (result != null) {
                 CSVParser parser = Csv.getNodeEntities(result);
                 List<NamespaceEntity> namespaceEntityList = new ArrayList<>();
@@ -39,9 +39,10 @@ public class NamespaceApi {
     }
 
     public static List<String> findNamespaceResourcesType(String configPath, String namespaces) {
+        String kubectlPath = KubernetesConfiguration.getInstance().getKubectlPath();
         try {
-            String command = "kubectl get all  --kubeconfig=" + configPath + " -n " + namespaces;
-            String result = Kubectl.execByAddArg(command, "--output=jsonpath=\"{range .items[*]}{.kind}{'\\n'}{end}\"");
+            String command = kubectlPath + " get all  --kubeconfig=" + configPath + " -n " + namespaces;
+            String result = Bash.execByAddArg(command, "--output=jsonpath=\"{range .items[*]}{.kind}{'\\n'}{end}\"");
             if (result != null) {
                 result = result.replaceAll("\"", "");
                 List<String> list = Lists.newArrayList(result.split("\n"));
@@ -55,9 +56,10 @@ public class NamespaceApi {
     }
 
     public static List<KindEntity> findNamespaceOneResourcesList(String configPath, String kind, String namespaces) {
+        String kubectlPath = KubernetesConfiguration.getInstance().getKubectlPath();
         try {
-            String command = "kubectl get " + kind + "  --kubeconfig=" + configPath + " -n " + namespaces;
-            String result = Kubectl.exec(command);
+            String command = kubectlPath + " get " + kind + "  --kubeconfig=" + configPath + " -n " + namespaces;
+            String result = Bash.exec(command);
             if (result != null) {
                 CSVParser parser = Csv.getNodeEntities(result);
                 List<KindEntity> kindEntityList = new ArrayList<>();
