@@ -26,15 +26,6 @@ public class OpenPluginSettingsAction extends AnAction implements DumbAware {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent event) {
-        showSettingsFor(getProject(event));
-    }
-
-    private static void showSettingsFor(Project project) {
-        ShowSettingsUtil.getInstance().showSettingsDialog(project, KubernetesConfigurable.PLUGIN_SETTINGS_NAME);
-    }
-
-    private static Project getProject(AnActionEvent event) {
-        DataContext dataContext = event.getDataContext();
-        return PlatformDataKeys.PROJECT.getData(dataContext);
+        ShowSettingsUtil.getInstance().showSettingsDialog(null, KubernetesConfigurable.PLUGIN_SETTINGS_NAME);
     }
 }

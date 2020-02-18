@@ -16,7 +16,7 @@
         <toolWindow id="Kuber Explorer" icon="/icons/kubernetes.svg" anchor="right" factoryClass="work.xujiyou.view.KubernetesToolWindowFactory"/>
         <applicationService serviceInterface="work.xujiyou.KubernetesConfiguration"
                         serviceImplementation="work.xujiyou.KubernetesConfiguration"/>
-        <projectConfigurable groupId="tools" groupWeight="20" displayName="K8s-Client Plugin"
+        <applicationConfigurable groupId="tools" groupWeight="20" displayName="K8s-Client Plugin"
                              instance="work.xujiyou.view.KubernetesConfigurable"
                              id="preferences.kubernetesOptions"/>
     </extensions>
