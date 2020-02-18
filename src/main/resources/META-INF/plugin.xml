@@ -1,10 +1,10 @@
 <idea-plugin>
-    <id>org.example.k8s-client</id>
-    <name>Plugin display name here</name>
-    <vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+    <id>work.xujiyou.k8s-client</id>
+    <name>K8s-Client</name>
+    <vendor email="xujiyou555@gmail.com" url="http://www.yourcompany.com">xujiyou</vendor>
 
     <description><![CDATA[
-    Enter short description for your plugin here.<br>
+    A kubernetes client plugin.<br>
     <em>most HTML tags may be used</em>
     ]]></description>
 
