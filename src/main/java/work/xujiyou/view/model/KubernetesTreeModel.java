@@ -26,7 +26,7 @@ import java.util.Map;
  */
 public class KubernetesTreeModel implements TreeModel {
 
-    public  KubernetesNode rootNode = new KubernetesNode(false, "root", ResourcesType.ROOT, "");
+    private KubernetesNode rootNode = new KubernetesNode(false, "root", ResourcesType.ROOT, "");
 
     public KubernetesTreeModel() {
         List<KubernetesNode> allClusterNodeList = new ArrayList<>();

@@ -23,7 +23,7 @@ import java.util.*;
 @NoArgsConstructor
 public class KubernetesNode {
 
-    private String uuid = UUID.randomUUID().toString();;
+    private String uuid = UUID.randomUUID().toString();
 
     private boolean leaf;
 

@@ -109,15 +109,13 @@ public class KubernetesExplorerPanel extends JPanel implements Disposable {
 
         DefaultActionGroup actionGroup = new DefaultActionGroup("KubernetesExplorerGroup", false);
         RefreshServerAction refreshServerAction = new RefreshServerAction(this);
-        AddServerAction addServerAction = new AddServerAction(this);
         if (ApplicationManager.getApplication() != null) {
-            actionGroup.add(addServerAction);
+            actionGroup.add(new OpenPluginSettingsAction());
             actionGroup.addSeparator();
             actionGroup.add(refreshServerAction);
             actionGroup.add(expandAllAction);
             actionGroup.add(collapseAllAction);
-            actionGroup.addSeparator();
-            actionGroup.add(new OpenPluginSettingsAction());
+
         }
 
         GuiUtils.installActionGroupInToolBar(actionGroup, toolBarPanel, ActionManager.getInstance(), "KubernetesExplorerActions", true);
