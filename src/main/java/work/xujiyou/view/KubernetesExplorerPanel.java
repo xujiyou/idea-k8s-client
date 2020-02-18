@@ -13,6 +13,7 @@ import com.intellij.ui.treeStructure.Tree;
 import work.xujiyou.KubernetesConfiguration;
 import work.xujiyou.utils.GuiUtils;
 import work.xujiyou.view.action.explorer.AddServerAction;
+import work.xujiyou.view.action.explorer.OpenPluginSettingsAction;
 import work.xujiyou.view.action.explorer.RefreshServerAction;
 import work.xujiyou.view.model.KubernetesNode;
 import work.xujiyou.view.model.KubernetesTreeModel;
@@ -115,6 +116,8 @@ public class KubernetesExplorerPanel extends JPanel implements Disposable {
             actionGroup.add(refreshServerAction);
             actionGroup.add(expandAllAction);
             actionGroup.add(collapseAllAction);
+            actionGroup.addSeparator();
+            actionGroup.add(new OpenPluginSettingsAction());
         }
 
         GuiUtils.installActionGroupInToolBar(actionGroup, toolBarPanel, ActionManager.getInstance(), "KubernetesExplorerActions", true);
