@@ -21,7 +21,7 @@ public class ConfigFiles {
 
     private String uuid = UUID.randomUUID().toString();
 
-    private List<File> fileList;
+    private List<String> filePathList;
 
     @Override
     public boolean equals(Object o) {

@@ -1,5 +1,6 @@
 package work.xujiyou.view.action.explorer;
 
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +20,7 @@ public class RefreshServerAction extends AnAction  {
     private final KubernetesExplorerPanel kubernetesExplorerPanel;
 
     public RefreshServerAction(KubernetesExplorerPanel kubernetesExplorerPanel) {
-        super(REFRESH_TEXT);
+        super(REFRESH_TEXT, "Refresh this server", AllIcons.General.Reset);
         this.kubernetesExplorerPanel = kubernetesExplorerPanel;
     }
 

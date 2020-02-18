@@ -56,8 +56,12 @@ public class KubernetesConfiguration implements PersistentStateComponent<Kuberne
     }
 
     public boolean isCompleteConfig() {
-
         return kubectlPath != null && serverConfigurations.size() != 0;
+    }
+
+    public void updateConfig(String kubectlPath, List<String> fileList) {
+        this.kubectlPath = kubectlPath;
+        this.serverConfigurations = new ArrayList<>(fileList);
     }
 
     @Nullable
@@ -69,6 +73,7 @@ public class KubernetesConfiguration implements PersistentStateComponent<Kuberne
     @Override
     public void loadState(@NotNull KubernetesConfiguration kubernetesConfiguration) {
         XmlSerializerUtil.copyBean(kubernetesConfiguration, this);
+        XmlSerializer.serialize(this);
     }
 
     @Override

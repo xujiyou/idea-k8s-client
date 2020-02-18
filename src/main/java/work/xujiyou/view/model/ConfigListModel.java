@@ -20,28 +20,24 @@ import java.util.Map;
  * @author jiyouxu
  * @date 2020/2/18
  */
-public class ConfigListModel implements ListModel<File> {
+public class ConfigListModel implements ListModel<String> {
 
     private ConfigFiles configFiles;
 
     public ConfigListModel() {
         configFiles = new ConfigFiles();
-        List<File> fileList = new ArrayList<>();
-        KubernetesConfiguration.getInstance().getServerConfigurations().forEach(path -> {
-            fileList.add(new File(path));
-        });
-        configFiles.setFileList(fileList);
+        List<String> filePathList = new ArrayList<>(KubernetesConfiguration.getInstance().getServerConfigurations());
+        configFiles.setFilePathList(filePathList);
     }
 
-    public void addConfig(JBList<File> fileList, String configPath) {
+    public void addConfig(JBList<String> fileList, String configPath) {
         try {
             Yaml yaml = new Yaml();
             InputStream inputStream = new FileInputStream(new File(configPath));
             Map<String, Object> yamlMap = yaml.load(inputStream);
             if (yamlMap != null && yamlMap.get("clusters") != null) {
                 if (!KubernetesConfiguration.getInstance().getServerConfigurations().contains(configPath)) {
-                    configFiles.getFileList().add(new File(configPath));
-                    KubernetesConfiguration.getInstance().getServerConfigurations().add(configPath);
+                    configFiles.getFilePathList().add(configPath);
                     fileList.updateUI();
                 }
             }
@@ -50,20 +46,23 @@ public class ConfigListModel implements ListModel<File> {
         }
     }
 
-    public void removeConfigFile(JBList<File> fileList, int selectedIndex) {
-        configFiles.getFileList().remove(selectedIndex);
-        KubernetesConfiguration.getInstance().getServerConfigurations().remove(selectedIndex);
+    public void removeConfigFile(JBList<String> fileList, int selectedIndex) {
+        configFiles.getFilePathList().remove(selectedIndex);
         fileList.updateUI();
+    }
+
+    public ConfigFiles getConfigFiles() {
+        return configFiles;
     }
 
     @Override
     public int getSize() {
-        return configFiles.getFileList().size();
+        return configFiles.getFilePathList().size();
     }
 
     @Override
-    public File getElementAt(int index) {
-        return configFiles.getFileList().get(index);
+    public String getElementAt(int index) {
+        return configFiles.getFilePathList().get(index);
     }
 
     @Override

@@ -7,8 +7,6 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
-
 /**
  * KubernetesToolWindowFactory class
  *
@@ -17,13 +15,13 @@ import javax.swing.*;
  */
 public class KubernetesToolWindowFactory implements ToolWindowFactory {
 
-    private KubernetesExplorerPanel kubernetesExplorerPanel = new KubernetesExplorerPanel();
+    public static final KubernetesExplorerPanel KUBERNETES_EXPLORER_PANEL = new KubernetesExplorerPanel();
 
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
 
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
-        Content content = contentFactory.createContent(kubernetesExplorerPanel, null, false);
+        Content content = contentFactory.createContent(KUBERNETES_EXPLORER_PANEL, null, false);
         toolWindow.getContentManager().addContent(content);
     }
 

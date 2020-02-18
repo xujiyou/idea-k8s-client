@@ -12,7 +12,6 @@ import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.treeStructure.Tree;
 import work.xujiyou.KubernetesConfiguration;
 import work.xujiyou.utils.GuiUtils;
-import work.xujiyou.view.action.explorer.AddServerAction;
 import work.xujiyou.view.action.explorer.OpenPluginSettingsAction;
 import work.xujiyou.view.action.explorer.RefreshServerAction;
 import work.xujiyou.view.model.KubernetesNode;
@@ -137,7 +136,7 @@ public class KubernetesExplorerPanel extends JPanel implements Disposable {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
 
-                if (!completeConfig()) {
+                if (KubernetesConfiguration.getInstance().getServerConfigurations().size() != 0) {
                     return;
                 }
 

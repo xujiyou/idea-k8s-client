@@ -1,37 +1,32 @@
 package work.xujiyou.view;
 
 import com.alibaba.fastjson.JSONObject;
-import com.intellij.ide.ui.UINumericRange;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.fileTypes.PlainTextFileType;
 import com.intellij.openapi.options.BaseConfigurable;
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
-import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.LabeledComponent;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.wm.impl.customFrameDecorations.header.CustomHeader;
 import com.intellij.ui.ToolbarDecorator;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBTextArea;
 import com.intellij.util.ui.JBUI;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.yaml.snakeyaml.Yaml;
 import work.xujiyou.KubernetesConfiguration;
 import work.xujiyou.utils.Bash;
 import work.xujiyou.view.model.ConfigListModel;
+import work.xujiyou.view.model.KubernetesTreeModel;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.io.*;
-import java.util.Map;
+import java.util.ArrayList;
 
 /**
  * KubernetesConfigurable class
@@ -39,7 +34,7 @@ import java.util.Map;
  * @author jiyouxu
  * @date 2020/2/18
  */
-public class KubernetesConfigurable extends BaseConfigurable implements SearchableConfigurable {
+public class SettingConfigurable extends BaseConfigurable implements SearchableConfigurable {
 
     public static final String PLUGIN_SETTINGS_NAME = "K8s-Client Plugin";
 
@@ -49,10 +44,10 @@ public class KubernetesConfigurable extends BaseConfigurable implements Searchab
 
     private JBTextArea versionLabel;
 
-    private JBList<File> fileList;
+    private JBList<String> fileList;
 
 
-    public KubernetesConfigurable() {
+    public SettingConfigurable() {
         mainPanel = new JPanel(new BorderLayout());
         versionLabel = new JBTextArea();
         fileList = new JBList<>();
@@ -118,6 +113,7 @@ public class KubernetesConfigurable extends BaseConfigurable implements Searchab
 
     private void removeConfigFile() {
         ((ConfigListModel) fileList.getModel()).removeConfigFile(fileList, fileList.getSelectedIndex());
+        setModified(true);
     }
 
     private void addConfigFile() {
@@ -126,6 +122,7 @@ public class KubernetesConfigurable extends BaseConfigurable implements Searchab
         for (VirtualFile virtualFile : virtualFiles) {
             if ("PLAIN_TEXT".equals(virtualFile.getFileType().getName())) {
                 ((ConfigListModel) fileList.getModel()).addConfig(fileList, virtualFile.getPath());
+                setModified(true);
             }
         }
     }
@@ -139,7 +136,9 @@ public class KubernetesConfigurable extends BaseConfigurable implements Searchab
                 new FileChooserDescriptor(true, false, false, false, false, false));
 
         shellPathField.getComponent().setText(KubernetesConfiguration.getInstance().getKubectlPath());
-
+        shellPathField.addPropertyChangeListener(event -> {
+            setModified(true);
+        });
         return shellPathField;
     }
 
@@ -182,29 +181,13 @@ public class KubernetesConfigurable extends BaseConfigurable implements Searchab
                 JSONObject serverObject = jsonObject.getJSONObject("serverVersion");
                 StringBuilder versionBuilder = new StringBuilder();
                 versionBuilder.append("client: ");
-                versionBuilder.append("version=");
-                versionBuilder.append(clientObject.getString("major")).append(".")
-                        .append(clientObject.getString("minor")).append(",");
-                versionBuilder.append("gitVersion=");
-                versionBuilder.append(clientObject.getString("gitVersion")).append(",");
-                versionBuilder.append("goVersion=");
-                versionBuilder.append(clientObject.getString("goVersion")).append(",");
-                versionBuilder.append("platform=");
-                versionBuilder.append(clientObject.getString("platform"));
+                getVersion(clientObject, versionBuilder);
 
 
                 if (serverObject != null) {
-                    versionBuilder.append("\n");
+                    versionBuilder.append(System.getProperty("line.separator"));
                     versionBuilder.append("server: ");
-                    versionBuilder.append("version=");
-                    versionBuilder.append(serverObject.getString("major")).append(".")
-                            .append(serverObject.getString("minor")).append(",");
-                    versionBuilder.append("gitVersion=");
-                    versionBuilder.append(serverObject.getString("gitVersion")).append(",");
-                    versionBuilder.append("goVersion=");
-                    versionBuilder.append(serverObject.getString("goVersion")).append(",");
-                    versionBuilder.append("platform=");
-                    versionBuilder.append(serverObject.getString("platform"));
+                    getVersion(serverObject, versionBuilder);
                 }
 
                 versionLabel.setText(versionBuilder.toString());
@@ -218,37 +201,59 @@ public class KubernetesConfigurable extends BaseConfigurable implements Searchab
         });
     }
 
-    @Override
-    public boolean isModified(@NotNull JTextField textField, @NotNull String value) {
-        return false;
+    private void getVersion(JSONObject clientObject, StringBuilder versionBuilder) {
+        versionBuilder.append("version=");
+        versionBuilder.append(clientObject.getString("major")).append(".")
+                .append(clientObject.getString("minor")).append(",");
+        versionBuilder.append("gitVersion=");
+        versionBuilder.append(clientObject.getString("gitVersion")).append(",");
+        versionBuilder.append("goVersion=");
+        versionBuilder.append(clientObject.getString("goVersion")).append(",");
+        versionBuilder.append("platform=");
+        versionBuilder.append(clientObject.getString("platform"));
     }
 
     @Override
-    public boolean isModified(@NotNull JTextField textField, int value, @NotNull UINumericRange range) {
-        return false;
-    }
-
-    @Override
-    public boolean isModified(@NotNull JToggleButton toggleButton, boolean value) {
-        return false;
-    }
-
-    @Override
-    public <T> boolean isModified(@NotNull ComboBox<T> comboBox, T value) {
-        return false;
+    public boolean isModified() {
+        String existingShellPath = KubernetesConfiguration.getInstance().getKubectlPath();
+        String shellPath = shellPathField.getComponent().getText();
+        return !StringUtils.equals(existingShellPath, shellPath)
+                || !KubernetesConfiguration.getInstance().getServerConfigurations()
+                    .equals(((ConfigListModel) fileList.getModel()).getConfigFiles().getFilePathList());
     }
 
     @Override
     public void apply() {
-
+        if (isModified()) {
+            KubernetesConfiguration.getInstance().updateConfig(
+                shellPathField.getComponent().getText(),
+                ((ConfigListModel) fileList.getModel()).getConfigFiles().getFilePathList()
+            );
+            KubernetesToolWindowFactory.KUBERNETES_EXPLORER_PANEL.getTree().setModel(new KubernetesTreeModel());
+        }
     }
 
     @Override
-    public void reset() { }
+    public void reset() {
+        ConfigListModel configListModel = ((ConfigListModel) fileList.getModel());
+        configListModel.getConfigFiles()
+                .setFilePathList(new ArrayList<>(KubernetesConfiguration.getInstance().getServerConfigurations()));
+        fileList.updateUI();
+        shellPathField.getComponent().setText(KubernetesConfiguration.getInstance().getKubectlPath());
+    }
+
+    @Override
+    public void cancel() {
+        reset();
+        super.cancel();
+    }
 
     @Override
     public void disposeUIResources() {
-
+        mainPanel = null;
+        shellPathField = null;
+        versionLabel = null;
+        fileList = null;
     }
 
     @NotNull

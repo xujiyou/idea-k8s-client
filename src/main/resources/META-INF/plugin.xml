@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>work.xujiyou.k8s-client</id>
     <name>K8s-Client</name>
-    <vendor email="xujiyou555@gmail.com" url="http://www.yourcompany.com">xujiyou</vendor>
+    <vendor email="xujiyou555@gmail.com" url="https://github.com/xujiyou">xujiyou</vendor>
 
     <description><![CDATA[
     A kubernetes client plugin.<br>
@@ -17,7 +17,7 @@
         <applicationService serviceInterface="work.xujiyou.KubernetesConfiguration"
                         serviceImplementation="work.xujiyou.KubernetesConfiguration"/>
         <applicationConfigurable groupId="tools" groupWeight="20" displayName="K8s-Client Plugin"
-                             instance="work.xujiyou.view.KubernetesConfigurable"
+                             instance="work.xujiyou.view.SettingConfigurable"
                              id="preferences.kubernetesOptions"/>
     </extensions>
 
