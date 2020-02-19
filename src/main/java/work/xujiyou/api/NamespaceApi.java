@@ -44,7 +44,7 @@ public class NamespaceApi {
             String command = kubectlPath + " get all  --kubeconfig=" + configPath + " -n " + namespaces;
             String result = Bash.execByAddArg(command, "--output=jsonpath=\"{range .items[*]}{.kind}{'\\n'}{end}\"");
             if (result != null) {
-                result = result.replaceAll("\"", "");
+                result = result.replaceAll("\"", "").replaceAll(" ", "");
                 List<String> list = Lists.newArrayList(result.split("\n"));
                 Set<String> set = new HashSet<>(list);
                 return new ArrayList<>(set);

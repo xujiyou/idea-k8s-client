@@ -3,6 +3,7 @@ package work.xujiyou.view.model;
 import com.alibaba.fastjson.annotation.JSONType;
 import com.google.common.base.Objects;
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.util.text.StringUtil;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import work.xujiyou.api.*;
@@ -111,11 +112,13 @@ public class KubernetesNode {
             //三级
             if (resourcesType == ResourcesType.NAMESPACES_INSTANCE) {
                 List<String> list = NamespaceApi.findNamespaceResourcesType(this.configPath, this.name);
-                if (list != null) {
+                if (list != null && list.size() != 0) {
                     list.forEach(str -> {
-                        KubernetesNode kubernetesNode = new KubernetesNode(false, str, ResourcesType.KIND, this.configPath);
-                        kubernetesNode.getInfoMap().put("namespaces", this.name);
-                        this.children.add(kubernetesNode);
+                        if (StringUtil.isNotEmpty(str)) {
+                            KubernetesNode kubernetesNode = new KubernetesNode(false, str, ResourcesType.KIND, this.configPath);
+                            kubernetesNode.getInfoMap().put("namespaces", this.name);
+                            this.children.add(kubernetesNode);
+                        }
                     });
                 }
             }
