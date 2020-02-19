@@ -3,12 +3,12 @@ package work.xujiyou.view.model;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.intellij.util.ui.tree.AbstractTreeModel;
 import org.yaml.snakeyaml.Yaml;
 import work.xujiyou.KubernetesConfiguration;
 import work.xujiyou.constant.ResourcesType;
 
 import javax.swing.event.TreeModelListener;
+import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,7 +24,7 @@ import java.util.Map;
  * @author jiyouxu
  * @date 2020/2/13
  */
-public class KubernetesTreeModel extends AbstractTreeModel {
+public class KubernetesTreeModel implements TreeModel {
 
     private KubernetesNode rootNode = new KubernetesNode(false, "root", ResourcesType.ROOT, "");
 
@@ -87,7 +87,7 @@ public class KubernetesTreeModel extends AbstractTreeModel {
 
     @Override
     public void valueForPathChanged(TreePath path, Object newValue) {
-        super.valueForPathChanged(path, newValue);
+
     }
 
     @Override

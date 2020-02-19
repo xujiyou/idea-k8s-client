@@ -1,7 +1,5 @@
 package work.xujiyou;
 
-import work.xujiyou.api.ResourcesApi;
-
 /**
  * CsvTest class
  *
@@ -11,6 +9,6 @@ import work.xujiyou.api.ResourcesApi;
 public class CsvTest {
 
     public static void main(String[] args) {
-        ResourcesApi.findResource("");
+
     }
 }

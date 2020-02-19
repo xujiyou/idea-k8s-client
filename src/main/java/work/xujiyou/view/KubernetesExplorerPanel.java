@@ -11,7 +11,6 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.treeStructure.Tree;
 import work.xujiyou.KubernetesConfiguration;
-import work.xujiyou.constant.ResourcesType;
 import work.xujiyou.utils.GuiUtils;
 import work.xujiyou.view.action.explorer.OpenPluginSettingsAction;
 import work.xujiyou.view.action.explorer.RefreshServerAction;
@@ -179,11 +178,7 @@ public class KubernetesExplorerPanel extends JPanel implements Disposable {
                     KubernetesNode kubernetesNode = (KubernetesNode) event.getPath().getLastPathComponent();
                     kubernetesNode.findResources();
                     tree.setPaintBusy(false);
-
-                    tree.getModel().valueForPathChanged(event.getPath(), new KubernetesNode(true, "haha", ResourcesType.KIND, kubernetesNode.getConfigPath()));
                     tree.updateUI();
-                    tree.repaint();
-                    tree.scrollPathToVisible(event.getPath());
                 });
             }
 

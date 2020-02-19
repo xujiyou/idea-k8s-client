@@ -75,6 +75,7 @@ public class KubernetesConfiguration implements PersistentStateComponent<Kuberne
     public void loadState(@NotNull KubernetesConfiguration kubernetesConfiguration) {
         if (StringUtil.isEmpty(kubernetesConfiguration.kubectlPath)) {
             kubernetesConfiguration.kubectlPath = findKubectl();
+            XmlSerializer.serialize(kubernetesConfiguration);
         }
         XmlSerializerUtil.copyBean(kubernetesConfiguration, this);
     }
