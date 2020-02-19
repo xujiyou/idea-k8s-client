@@ -88,6 +88,7 @@ public class SettingConfigurable extends BaseConfigurable implements SearchableC
         versionLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         versionLabel.setEditable(false);
         versionLabel.setBackground(mainPanel.getBackground());
+        versionLabel.setBorder(JBUI.Borders.empty(4, 0));
         kubernetesShellOptionsPanel.add(versionLabel, BorderLayout.SOUTH);
 
         mainPanel.add(kubernetesShellOptionsPanel, BorderLayout.NORTH);

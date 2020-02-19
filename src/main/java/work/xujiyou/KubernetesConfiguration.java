@@ -62,6 +62,7 @@ public class KubernetesConfiguration implements PersistentStateComponent<Kuberne
     public void updateConfig(String kubectlPath, List<String> fileList) {
         this.kubectlPath = kubectlPath;
         this.serverConfigurations = new ArrayList<>(fileList);
+        XmlSerializer.serialize(this);
     }
 
     @Nullable
@@ -72,8 +73,10 @@ public class KubernetesConfiguration implements PersistentStateComponent<Kuberne
 
     @Override
     public void loadState(@NotNull KubernetesConfiguration kubernetesConfiguration) {
+        if (StringUtil.isEmpty(kubernetesConfiguration.kubectlPath)) {
+            kubernetesConfiguration.kubectlPath = findKubectl();
+        }
         XmlSerializerUtil.copyBean(kubernetesConfiguration, this);
-        XmlSerializer.serialize(this);
     }
 
     @Override
@@ -83,14 +86,7 @@ public class KubernetesConfiguration implements PersistentStateComponent<Kuberne
         if (defaultFile.exists()) {
             serverConfigurations.add(defaultFile.getPath());
         }
-        try {
-            String kubectlPath = Bash.exec("which kubectl");
-            if (StringUtil.isNotEmpty(kubectlPath)) {
-                this.kubectlPath = kubectlPath.replaceAll(System.getProperty("line.separator"), "");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.kubectlPath = findKubectl();
         XmlSerializer.serialize(this);
     }
 
@@ -103,5 +99,18 @@ public class KubernetesConfiguration implements PersistentStateComponent<Kuberne
                 "kubectlPath='" + kubectlPath + '\'' +
                 ", serverConfigurations=" + serverConfigurations +
                 '}';
+    }
+
+    private String findKubectl() {
+        String kubectlPath = null;
+        try {
+            kubectlPath = Bash.exec("which kubectl");
+            if (StringUtil.isNotEmpty(kubectlPath)) {
+                kubectlPath = kubectlPath.replaceAll(System.getProperty("line.separator"), "");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return kubectlPath;
     }
 }

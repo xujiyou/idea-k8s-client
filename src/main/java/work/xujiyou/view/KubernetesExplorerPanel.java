@@ -11,6 +11,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.treeStructure.Tree;
 import work.xujiyou.KubernetesConfiguration;
+import work.xujiyou.constant.ResourcesType;
 import work.xujiyou.utils.GuiUtils;
 import work.xujiyou.view.action.explorer.OpenPluginSettingsAction;
 import work.xujiyou.view.action.explorer.RefreshServerAction;
@@ -34,8 +35,8 @@ public class KubernetesExplorerPanel extends JPanel implements Disposable {
 
     private JPanel rootPanel;
     private JPanel toolBarPanel;
-    private JPanel containerpanel;
 
+    private JBScrollPane scrollPane;
     private final Tree kubernetesTree;
 
     private final KubernetesTreeModel kubernetesTreeModel = new KubernetesTreeModel();
@@ -54,14 +55,10 @@ public class KubernetesExplorerPanel extends JPanel implements Disposable {
         toolBarPanel = new JPanel();
         toolBarPanel.setLayout(new BorderLayout());
 
-        containerpanel = new JPanel();
-        containerpanel.setLayout(new BorderLayout());
-        containerpanel.add(new JBScrollPane(kubernetesTree), BorderLayout.CENTER);
+        scrollPane = new JBScrollPane(kubernetesTree);
 
         rootPanel.add(toolBarPanel, BorderLayout.NORTH);
-        rootPanel.add(containerpanel, BorderLayout.CENTER);
-
-
+        rootPanel.add(scrollPane, BorderLayout.CENTER);
 
         setLayout(new BorderLayout());
         add(rootPanel, BorderLayout.CENTER);
@@ -174,7 +171,6 @@ public class KubernetesExplorerPanel extends JPanel implements Disposable {
             }
         });
 
-
         tree.addTreeExpansionListener(new TreeExpansionListener() {
             @Override
             public void treeExpanded(TreeExpansionEvent event) {
@@ -183,7 +179,11 @@ public class KubernetesExplorerPanel extends JPanel implements Disposable {
                     KubernetesNode kubernetesNode = (KubernetesNode) event.getPath().getLastPathComponent();
                     kubernetesNode.findResources();
                     tree.setPaintBusy(false);
+
+                    tree.getModel().valueForPathChanged(event.getPath(), new KubernetesNode(true, "haha", ResourcesType.KIND, kubernetesNode.getConfigPath()));
                     tree.updateUI();
+                    tree.repaint();
+                    tree.scrollPathToVisible(event.getPath());
                 });
             }
 
