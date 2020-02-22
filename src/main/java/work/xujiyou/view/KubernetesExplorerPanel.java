@@ -7,14 +7,18 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.ui.Splitter;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.components.JBScrollPane;
+import com.intellij.ui.table.TableView;
 import com.intellij.ui.treeStructure.Tree;
 import work.xujiyou.KubernetesConfiguration;
 import work.xujiyou.utils.GuiUtils;
 import work.xujiyou.view.action.explorer.OpenPluginSettingsAction;
 import work.xujiyou.view.action.explorer.RefreshServerAction;
+import work.xujiyou.view.model.InfoItem;
 import work.xujiyou.view.model.KubernetesNode;
+import work.xujiyou.view.model.KubernetesTableModel;
 import work.xujiyou.view.model.KubernetesTreeModel;
 
 import javax.swing.*;
@@ -53,11 +57,18 @@ public class KubernetesExplorerPanel extends JPanel implements Disposable {
 
         toolBarPanel = new JPanel();
         toolBarPanel.setLayout(new BorderLayout());
+        rootPanel.add(toolBarPanel, BorderLayout.NORTH);
 
         scrollPane = new JBScrollPane(kubernetesTree);
+        JBScrollPane statsPanel  = new JBScrollPane();
+        TableView<InfoItem> tableView = new TableView<>();
+        tableView.setModel(new KubernetesTableModel());
+        statsPanel.add(tableView);
 
-        rootPanel.add(toolBarPanel, BorderLayout.NORTH);
-        rootPanel.add(scrollPane, BorderLayout.CENTER);
+        Splitter splitter = new Splitter(true, 0.6f);
+        splitter.setFirstComponent(scrollPane);
+        splitter.setSecondComponent(statsPanel);
+        rootPanel.add(splitter, BorderLayout.CENTER);
 
         setLayout(new BorderLayout());
         add(rootPanel, BorderLayout.CENTER);
