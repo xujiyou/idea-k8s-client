@@ -83,9 +83,7 @@ public class KubernetesExplorerPanel extends JPanel implements Disposable {
 
             @Override
             public boolean canExpand() {
-                if (completeConfig()) {
-                    return false;
-                }
+                if (completeConfig()) { return false; }
                 return !kubernetesTree.isExpanded(0);
             }
 
@@ -96,23 +94,18 @@ public class KubernetesExplorerPanel extends JPanel implements Disposable {
 
             @Override
             public boolean canCollapse() {
-                if (completeConfig()) {
-                    return false;
-                }
+                if (completeConfig()) { return false; }
                 return !kubernetesTree.isCollapsed(0);
             }
         };
 
         CommonActionsManager actionsManager = CommonActionsManager.getInstance();
-
         final AnAction expandAllAction = actionsManager.createExpandAllAction(treeExpander, rootPanel);
         final AnAction collapseAllAction = actionsManager.createCollapseAllAction(treeExpander, rootPanel);
-
         Disposer.register(this, () -> {
             collapseAllAction.unregisterCustomShortcutSet(rootPanel);
             expandAllAction.unregisterCustomShortcutSet(rootPanel);
         });
-
         DefaultActionGroup actionGroup = new DefaultActionGroup("KubernetesExplorerGroup", false);
         RefreshServerAction refreshServerAction = new RefreshServerAction(this);
         if (ApplicationManager.getApplication() != null) {
